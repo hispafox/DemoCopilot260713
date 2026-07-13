@@ -1,6 +1,6 @@
 ---
 name: mensajes-commit
-description: Genera mensajes de commit especificos, claros y breves para este repositorio, siguiendo la convencion tipo(ambito): descripcion corta en castellano.
+description: "Genera mensajes de commit especificos, claros y breves para este repositorio, siguiendo la convencion tipo(ambito): descripcion corta en castellano."
 ---
 
 # mensajes-commit
