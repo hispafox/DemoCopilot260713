@@ -129,3 +129,23 @@ Cuando generes codigo:
 - En desarrollo frontend usar HTTP local (Vite por defecto).
 - Backend en HTTPS local con certificado de desarrollo de .NET.
 - Si se usa proxy en Vite hacia backend HTTPS, configurar secure: false.
+
+## Convencion de commits Git
+- Formato obligatorio del mensaje: tipo(ambito): descripcion corta en castellano y en minusculas.
+- El asunto del commit debe ir siempre en una sola linea y, de preferencia, por debajo de 72 caracteres.
+- Opcionalmente, se permite una segunda linea breve para agregar contexto.
+- El ambito es opcional cuando no aporte contexto.
+- Tipos permitidos:
+  - feat: nueva funcionalidad
+  - fix: correccion de errores
+  - docs: cambios de documentacion
+  - refactor: reorganizacion interna sin cambiar comportamiento
+  - test: altas o ajustes de pruebas
+  - chore: tareas de mantenimiento
+  - ci: cambios de integracion o pipelines
+
+Ejemplos:
+- feat(tareas): agrega endpoint para completar tarea
+- fix(api): corrige validacion de id en actualizar
+- docs(readme): actualiza guia de arranque local
+- test(servicios): cubre caso de titulo vacio
