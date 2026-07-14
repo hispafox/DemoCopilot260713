@@ -49,6 +49,27 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
     }
 
     [Fact]
+    public async Task ObtenerPorId_CuandoExiste_DevuelveOkConTarea()
+    {
+        var crearDto = new CrearTareaDto
+        {
+            Titulo = "Consultar tarea",
+            Descripcion = "Caso de get por id",
+        };
+
+        var creacion = await cliente.PostAsJsonAsync("/api/tareas", crearDto);
+        var creada = await creacion.Content.ReadFromJsonAsync<TareaDto>();
+
+        var respuesta = await cliente.GetAsync($"/api/tareas/{creada!.Id}");
+
+        Assert.Equal(HttpStatusCode.OK, respuesta.StatusCode);
+
+        var tarea = await respuesta.Content.ReadFromJsonAsync<TareaDto>();
+        Assert.NotNull(tarea);
+        Assert.Equal(creada.Id, tarea!.Id);
+    }
+
+    [Fact]
     public async Task Completar_CuandoExiste_DevuelveNoContent()
     {
         var crearDto = new CrearTareaDto
@@ -61,6 +82,23 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
         var creada = await creacion.Content.ReadFromJsonAsync<TareaDto>();
 
         var respuesta = await cliente.PatchAsync($"/api/tareas/{creada!.Id}/completar", null);
+
+        Assert.Equal(HttpStatusCode.NoContent, respuesta.StatusCode);
+    }
+
+    [Fact]
+    public async Task Eliminar_CuandoExiste_DevuelveNoContent()
+    {
+        var crearDto = new CrearTareaDto
+        {
+            Titulo = "Eliminar tarea",
+            Descripcion = "Caso de delete",
+        };
+
+        var creacion = await cliente.PostAsJsonAsync("/api/tareas", crearDto);
+        var creada = await creacion.Content.ReadFromJsonAsync<TareaDto>();
+
+        var respuesta = await cliente.DeleteAsync($"/api/tareas/{creada!.Id}");
 
         Assert.Equal(HttpStatusCode.NoContent, respuesta.StatusCode);
     }
@@ -87,7 +125,7 @@ public sealed class TareasApiFactory : WebApplicationFactory<Program>
             using var alcance = proveedor.CreateScope();
             var contexto = alcance.ServiceProvider.GetRequiredService<AplicacionDbContext>();
             contexto.Database.EnsureDeleted();
-            contexto.Database.EnsureCreated();
+            contexto.Database.Migrate();
         });
     }
 }

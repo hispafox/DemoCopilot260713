@@ -25,6 +25,12 @@ builder.Services.AddScoped<ITareaServicio, TareaServicio>();
 
 var app = builder.Build();
 
+using (var alcance = app.Services.CreateScope())
+{
+    var contexto = alcance.ServiceProvider.GetRequiredService<AplicacionDbContext>();
+    contexto.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
