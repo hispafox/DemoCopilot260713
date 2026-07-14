@@ -1,4 +1,4 @@
-# DemoCopilot260713
+# DemoCopilot260713  Version 1.0
 
 Aplicacion de lista de tareas con arquitectura separada por capas:
 
