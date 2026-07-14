@@ -9,7 +9,7 @@ Definir un conjunto pequeno de skills genericas y reutilizables para cualquier d
 - Debe poder usarse en backend y/o frontend segun corresponda.
 - Si una skill solo sirve para un caso concreto, no entra al catalogo.
 
-## 3. Catalogo reducido (11 skills)
+## 3. Catalogo reducido (12 skills)
 
 ### SK-00 - Creacion y scaffolding del proyecto
 - Para que sirve: crear la estructura inicial del proyecto (backend .NET, frontend React+Vite, configuracion de workspace) a partir de cero antes de escribir cualquier codigo de dominio o de API.
@@ -77,6 +77,12 @@ Definir un conjunto pequeno de skills genericas y reutilizables para cualquier d
 - Salidas: plantillas de decision tecnica, checklist de entrega y guia de evolucion.
 - Reutilizacion: alta.
 
+### SK-11 - Verificacion integral de la aplicacion
+- Para que sirve: verificar de forma objetiva que backend, frontend, persistencia y contratos funcionan en conjunto antes de cerrar una feature.
+- Entradas: implementacion completa del modulo y suite de pruebas disponible.
+- Salidas: evidencia de verificacion (tests backend/frontend, build frontend, validacion de migraciones y endpoints criticos).
+- Reutilizacion: alta.
+
 ## 4. Priorizacion recomendada
 
 ## Fase A - Fundacion
@@ -87,6 +93,9 @@ Definir un conjunto pequeno de skills genericas y reutilizables para cualquier d
 
 ## Fase C - Estandar operativo
 - SK-10.
+
+## Fase D - Cierre con evidencia
+- SK-11.
 
 ## 5. Lo que se elimina respecto al enfoque anterior
 - Skills por endpoint concreto (por ejemplo, "endpoint de listado").

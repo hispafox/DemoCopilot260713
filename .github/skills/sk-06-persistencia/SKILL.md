@@ -160,6 +160,38 @@ builder.Services.AddDbContext<AplicacionDbContext>(opciones =>
    ```
 6. Revisar el archivo de migracion generado antes de aplicarlo.
 
+## Blindaje obligatorio contra "no such table"
+
+Para evitar el error `SQLite Error 1: 'no such table: Tareas'` (o equivalente en otras tablas), este skill exige estas medidas en cada modulo nuevo:
+
+1. Aplicar migraciones automaticamente al iniciar la API.
+2. Verificar que la conexion apunte a la base esperada segun entorno (`appsettings.json` y `appsettings.Development.json`).
+3. Evitar `EnsureCreated()` en la API productiva; usar `Database.Migrate()`.
+4. Añadir al menos un test de integracion que falle si la tabla no existe.
+
+### Patron recomendado en Program.cs
+
+```csharp
+// Ejecutar migraciones pendientes al arrancar la aplicacion.
+using (var alcance = app.Services.CreateScope())
+{
+    var dbContext = alcance.ServiceProvider.GetRequiredService<AplicacionDbContext>();
+    dbContext.Database.Migrate();
+}
+```
+
+### Regla de entornos y rutas
+
+- Definir la cadena `ConnectionStrings:BaseDatos` en cada entorno.
+- En desarrollo, usar archivo dedicado (ejemplo: `aplicacion-tareas.dev.db`) para no mezclar datos con otros perfiles.
+- No confiar en rutas relativas ambiguas cuando el directorio de trabajo pueda cambiar (tests, publish, contenedor).
+
+### Regla de pruebas de integracion
+
+- El fixture de API debe construir el esquema desde migraciones (`Migrate`) o, si usa `EnsureCreated` en test aislado, replicar fielmente la configuracion de entidad.
+- Debe existir un test smoke de `GET /api/tareas` que garantice respuesta `200` sin excepcion de tabla faltante.
+- Si este test falla con error SQL de tabla inexistente, bloquear merge hasta corregir migraciones/arranque.
+
 ## Reglas de uso de AsNoTracking
 
 - Usar `AsNoTracking()` en todas las consultas de lectura sin modificacion posterior.
@@ -174,6 +206,8 @@ builder.Services.AddDbContext<AplicacionDbContext>(opciones =>
 - [ ] Los campos obligatorios tienen `IsRequired()` en la configuracion.
 - [ ] Los indices existen para los campos mas consultados.
 - [ ] La cadena de conexion esta en `appsettings.json`, no hardcodeada en codigo.
+- [ ] La API aplica migraciones pendientes al arranque (`Database.Migrate()`).
+- [ ] Existe test de integracion smoke que detecta tabla faltante antes de merge.
 
 ## Errores comunes a evitar
 
@@ -182,6 +216,8 @@ builder.Services.AddDbContext<AplicacionDbContext>(opciones =>
 - **Borrar la DB para cambiar el esquema**: siempre migraciones incrementales.
 - **Logica de negocio en el repositorio**: el repositorio solo hace CRUD; la logica va en el dominio o en el servicio.
 - **Conexion hardcodeada**: usar `IConfiguration` o variables de entorno.
+- **No aplicar migraciones al arrancar**: produce errores de tabla inexistente aunque la migracion exista en codigo.
+- **Cadena de conexion distinta a la esperada**: crea/usa otro archivo SQLite y aparenta que "faltan tablas".
 
 ## Relacion con otros skills
 

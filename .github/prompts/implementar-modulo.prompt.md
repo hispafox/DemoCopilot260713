@@ -19,6 +19,24 @@ Test-Path src/frontend -PathType Container
 - Si alguno devuelve `False`: **detener** y aplicar SK-00 completo antes de continuar.
 - Si ambos existen: continuar al paso 1.
 
+## Paso 0.5 — Levantamiento de requisitos documentales (obligatorio)
+
+Antes de crear o modificar codigo del modulo, leer los documentos de requisitos funcionales en `docs/`.
+
+Reglas obligatorias:
+
+- Buscar y leer todos los archivos de requisitos que existan en `docs/` con estos patrones: `*requisito*.md`, `*requisitos*.md`, `*especificacion*.md`.
+- Si existe `docs/documento-requisitos-aplicacion.md`, su lectura es obligatoria.
+- Si existe una guia operativa de documentacion (por ejemplo `docs/guia-uso-github-y-docs.md`), leerla antes de implementar.
+- Construir una mini-matriz de trazabilidad interna (requisito -> artefacto a crear/ajustar).
+- Si falta informacion para cumplir un requisito, detenerse y pedir aclaracion al usuario antes de codificar.
+
+Criterio de salida del paso 0.5:
+
+- Confirmar al usuario que los requisitos documentales fueron leidos.
+- Enumerar de forma breve que requisitos se implementaran en backend, frontend y pruebas.
+- Solo entonces continuar con SK-01.
+
 ## Paso 1 — Modelado de dominio (SK-01)
 
 Leer el skill `sk-01-modelado-dominio` y aplicarlo:
@@ -119,6 +137,21 @@ Leer el skill `sk-10-documentacion-dod` y ejecutar el checklist completo antes d
 - Commits: mensajes con formato `tipo(ambito): descripcion corta en castellano`.
 - Documentacion: ADR si se tomo una decision tecnica significativa.
 
+## Paso 11 — Verificacion integral final (SK-11)
+
+Leer el skill `sk-11-verificacion-integral` y ejecutarlo como cierre obligatorio del modulo:
+
+- Ejecutar tests backend: `dotnet test`.
+- Ejecutar tests frontend: `npm run test -- --run`.
+- Ejecutar build frontend: `npm run build`.
+- Confirmar evidencia de migraciones y mitigacion de riesgo de tabla faltante.
+- Confirmar cobertura minima de endpoints criticos con tests de integracion.
+
+Criterio de salida del paso 11:
+
+- Confirmar al usuario el resultado de cada verificacion (ok/error).
+- No cerrar el modulo mientras exista una verificacion bloqueante fallida.
+
 ---
 
 ## Reglas de orquestacion
@@ -128,3 +161,4 @@ Leer el skill `sk-10-documentacion-dod` y ejecutar el checklist completo antes d
 3. **No mezclar responsabilidades**: cada artefacto (entidad, DTO, mapeador, servicio, controlador, repositorio) va en su capa y carpeta correcta.
 4. **Confirmar al usuario** al finalizar cada paso con un resumen de los artefactos creados antes de continuar al siguiente.
 5. **Si el proyecto no existe** (paso 0 falla): crear el scaffolding completo antes de escribir una sola linea de logica.
+6. **No cerrar implementacion sin SK-11**: la feature solo se considera terminada cuando la verificacion integral final esta completa.

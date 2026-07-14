@@ -21,6 +21,13 @@ Aplicacion de lista de tareas con:
 ## Objetivo
 Mantener un codigo simple, mantenible y listo para evolucionar sin mezclar responsabilidades.
 
+## Criterio de calidad basado en documentacion
+- Antes de implementar cualquier feature nueva, leer primero los documentos de requisitos disponibles en `docs/`.
+- Es obligatorio leer `docs/documento-requisitos-aplicacion.md` cuando exista.
+- Si existen otros documentos de requisitos o especificacion en `docs/` (por nombre o contenido), tambien deben leerse antes de codificar.
+- Antes de escribir codigo, construir una trazabilidad minima: requisito -> capa afectada (Domain/Application/Api/Infrastructure/Frontend/Tests).
+- No marcar una feature como terminada si no hay evidencia de cobertura de requisitos en codigo y pruebas.
+
 ## Arquitectura esperada
 Separar claramente capas y responsabilidades:
 - Modelos: entidades de dominio y DTOs
