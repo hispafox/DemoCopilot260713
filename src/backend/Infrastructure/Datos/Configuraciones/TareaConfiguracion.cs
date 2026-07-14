@@ -13,6 +13,12 @@ public sealed class TareaConfiguracion : IEntityTypeConfiguration<Tarea>
             valor => valor,
             valor => DateTime.SpecifyKind(valor, DateTimeKind.Utc));
 
+        var convertidorUtcNullable = new ValueConverter<DateTime?, DateTime?>(
+            valor => valor,
+            valor => valor.HasValue
+                ? DateTime.SpecifyKind(valor.Value, DateTimeKind.Utc)
+                : valor);
+
         builder.ToTable("Tareas");
 
         builder.HasKey(tarea => tarea.Id);
@@ -39,10 +45,16 @@ public sealed class TareaConfiguracion : IEntityTypeConfiguration<Tarea>
             .IsRequired()
             .HasConversion(convertidorUtc);
 
+        builder.Property(tarea => tarea.VenceEnUtc)
+            .HasConversion(convertidorUtcNullable);
+
         builder.HasIndex(tarea => tarea.EstaCompletada)
             .HasDatabaseName("IX_Tareas_EstaCompletada");
 
         builder.HasIndex(tarea => tarea.Titulo)
             .HasDatabaseName("IX_Tareas_Titulo");
+
+        builder.HasIndex(tarea => tarea.VenceEnUtc)
+            .HasDatabaseName("IX_Tareas_VenceEnUtc");
     }
 }

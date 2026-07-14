@@ -5,14 +5,17 @@ export interface Tarea {
   estaCompletada: boolean
   creadoEnUtc: string
   actualizadoEnUtc: string
+  venceEnUtc?: string
 }
 
 export interface CrearTareaDto {
   titulo: string
   descripcion?: string
+  venceEnUtc?: string
 }
 
 export interface ActualizarTareaDto {
   titulo: string
   descripcion?: string
+  venceEnUtc?: string
 }

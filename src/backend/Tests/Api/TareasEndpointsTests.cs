@@ -33,10 +33,12 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
     [Fact]
     public async Task Crear_ConPayloadValido_DevuelveCreated()
     {
+        var vencimientoUtc = DateTime.UtcNow.AddDays(3);
         var dto = new CrearTareaDto
         {
             Titulo = "Test integracion",
             Descripcion = "Validar endpoint post",
+            VenceEnUtc = vencimientoUtc,
         };
 
         var respuesta = await cliente.PostAsJsonAsync("/api/tareas", dto);
@@ -46,6 +48,7 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
         var creada = await respuesta.Content.ReadFromJsonAsync<TareaDto>();
         Assert.NotNull(creada);
         Assert.True(creada!.Id > 0);
+        Assert.Equal(vencimientoUtc, creada.VenceEnUtc);
     }
 
     [Fact]
@@ -101,6 +104,20 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
         var respuesta = await cliente.DeleteAsync($"/api/tareas/{creada!.Id}");
 
         Assert.Equal(HttpStatusCode.NoContent, respuesta.StatusCode);
+    }
+
+    [Fact]
+    public async Task Crear_ConVencimientoPasado_DevuelveBadRequest()
+    {
+        var dto = new CrearTareaDto
+        {
+            Titulo = "Tarea invalida",
+            VenceEnUtc = DateTime.UtcNow.AddMinutes(-15),
+        };
+
+        var respuesta = await cliente.PostAsJsonAsync("/api/tareas", dto);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
     }
 }
 

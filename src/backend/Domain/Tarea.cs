@@ -14,6 +14,8 @@ public sealed class Tarea
 
     public DateTime ActualizadoEnUtc { get; private set; }
 
+    public DateTime? VenceEnUtc { get; private set; }
+
     private Tarea()
     {
     }
@@ -25,7 +27,7 @@ public sealed class Tarea
     /// <param name="descripcion">Descripcion opcional de la tarea.</param>
     /// <returns>Instancia valida de <see cref="Tarea"/>.</returns>
     /// <exception cref="ArgumentException">Se produce cuando el titulo esta vacio o excede la longitud maxima.</exception>
-    public static Tarea Crear(string titulo, string? descripcion)
+    public static Tarea Crear(string titulo, string? descripcion, DateTime? venceEnUtc)
     {
         ValidarTitulo(titulo);
 
@@ -38,6 +40,7 @@ public sealed class Tarea
             EstaCompletada = false,
             CreadoEnUtc = ahoraUtc,
             ActualizadoEnUtc = ahoraUtc,
+            VenceEnUtc = NormalizarFechaUtc(venceEnUtc),
         };
     }
 
@@ -47,12 +50,13 @@ public sealed class Tarea
     /// <param name="titulo">Nuevo titulo obligatorio.</param>
     /// <param name="descripcion">Nueva descripcion opcional.</param>
     /// <exception cref="ArgumentException">Se produce cuando el titulo es invalido.</exception>
-    public void Actualizar(string titulo, string? descripcion)
+    public void Actualizar(string titulo, string? descripcion, DateTime? venceEnUtc)
     {
         ValidarTitulo(titulo);
 
         Titulo = titulo.Trim();
         Descripcion = NormalizarDescripcion(descripcion);
+        VenceEnUtc = NormalizarFechaUtc(venceEnUtc);
         ActualizadoEnUtc = DateTime.UtcNow;
     }
 
@@ -114,5 +118,32 @@ public sealed class Tarea
         }
 
         return descripcionNormalizada;
+    }
+
+    private static DateTime? NormalizarFechaUtc(DateTime? fechaUtc)
+    {
+        if (!fechaUtc.HasValue)
+        {
+            return null;
+        }
+
+        if (fechaUtc.Value == default)
+        {
+            throw new ArgumentException("La fecha de vencimiento no puede ser la fecha por defecto.", nameof(fechaUtc));
+        }
+
+        var fechaNormalizadaUtc = fechaUtc.Value.Kind switch
+        {
+            DateTimeKind.Utc => fechaUtc,
+            DateTimeKind.Local => fechaUtc.Value.ToUniversalTime(),
+            _ => DateTime.SpecifyKind(fechaUtc.Value, DateTimeKind.Utc),
+        };
+
+        if (fechaNormalizadaUtc.Value < DateTime.UtcNow)
+        {
+            throw new ArgumentException("La fecha de vencimiento no puede estar en el pasado.", nameof(fechaUtc));
+        }
+
+        return fechaNormalizadaUtc;
     }
 }

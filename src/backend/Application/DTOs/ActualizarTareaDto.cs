@@ -10,4 +10,6 @@ public sealed class ActualizarTareaDto
 
     [MaxLength(1000, ErrorMessage = "La descripcion no puede superar 1000 caracteres.")]
     public string? Descripcion { get; init; }
+
+    public DateTime? VenceEnUtc { get; init; }
 }

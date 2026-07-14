@@ -13,4 +13,6 @@ public sealed class TareaDto
     public DateTime CreadoEnUtc { get; init; }
 
     public DateTime ActualizadoEnUtc { get; init; }
+
+    public DateTime? VenceEnUtc { get; init; }
 }

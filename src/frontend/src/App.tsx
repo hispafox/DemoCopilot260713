@@ -8,6 +8,7 @@ function App() {
   const [tareas, setTareas] = useState<Tarea[]>([])
   const [titulo, setTitulo] = useState('')
   const [descripcion, setDescripcion] = useState('')
+  const [venceEnLocal, setVenceEnLocal] = useState('')
   const [cargando, setCargando] = useState(true)
   const [creando, setCreando] = useState(false)
   const [error, setError] = useState('')
@@ -48,11 +49,13 @@ function App() {
       const tareaCreada = await tareasServicio.crear({
         titulo,
         descripcion: descripcion.trim() || undefined,
+        venceEnUtc: convertirFechaLocalAIsoUtc(venceEnLocal),
       })
 
       setTareas((previo) => [tareaCreada, ...previo])
       setTitulo('')
       setDescripcion('')
+      setVenceEnLocal('')
     } catch (errorCrear) {
       setError(errorCrear instanceof Error ? errorCrear.message : 'No se pudo crear la tarea.')
     } finally {
@@ -84,6 +87,14 @@ function App() {
     return new Date(isoUtc).toLocaleString()
   }
 
+  function convertirFechaLocalAIsoUtc(fechaLocal: string) {
+    if (!fechaLocal.trim()) {
+      return undefined
+    }
+
+    return new Date(fechaLocal).toISOString()
+  }
+
   return (
     <main className="contenedor">
       <header className="cabecera">
@@ -111,6 +122,14 @@ function App() {
             maxLength={1000}
             onChange={(evento) => setDescripcion(evento.target.value)}
             placeholder="Detalles de la tarea"
+          />
+
+          <label htmlFor="venceEnLocal">Vence el (opcional)</label>
+          <input
+            id="venceEnLocal"
+            type="datetime-local"
+            value={venceEnLocal}
+            onChange={(evento) => setVenceEnLocal(evento.target.value)}
           />
 
           <button type="submit" disabled={creando}>
@@ -141,6 +160,7 @@ function App() {
                   <small>
                     Creada: {formatearFecha(tarea.creadoEnUtc)} | Actualizada: {formatearFecha(tarea.actualizadoEnUtc)}
                   </small>
+                  {tarea.venceEnUtc ? <small>Vence: {formatearFecha(tarea.venceEnUtc)}</small> : null}
                 </div>
                 <div className="acciones">
                   {!tarea.estaCompletada ? (

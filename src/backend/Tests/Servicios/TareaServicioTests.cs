@@ -35,6 +35,7 @@ public sealed class TareaServicioTests
         {
             Titulo = "Documentar release",
             Descripcion = "Actualizar changelog",
+            VenceEnUtc = DateTime.UtcNow.AddDays(1),
         };
 
         tareaRepositorio.AgregarAsync(Arg.Any<Tarea>(), Arg.Any<CancellationToken>())
@@ -45,6 +46,7 @@ public sealed class TareaServicioTests
         await tareaRepositorio.Received(1).AgregarAsync(Arg.Any<Tarea>(), Arg.Any<CancellationToken>());
         Assert.Equal(dto.Titulo, resultado.Titulo);
         Assert.False(resultado.EstaCompletada);
+        Assert.Equal(dto.VenceEnUtc, resultado.VenceEnUtc);
     }
 
     [Fact]
@@ -55,5 +57,18 @@ public sealed class TareaServicioTests
 
         await Assert.ThrowsAsync<KeyNotFoundException>(
             async () => await tareaServicio.CompletarAsync(10, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task CrearAsync_ConVencimientoPasado_LanzaArgumentException()
+    {
+        var dto = new CrearTareaDto
+        {
+            Titulo = "Tarea invalida",
+            VenceEnUtc = DateTime.UtcNow.AddMinutes(-10),
+        };
+
+        await Assert.ThrowsAsync<ArgumentException>(
+            async () => await tareaServicio.CrearAsync(dto, CancellationToken.None));
     }
 }

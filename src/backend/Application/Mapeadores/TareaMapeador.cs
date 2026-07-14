@@ -15,6 +15,7 @@ public static class TareaMapeador
             EstaCompletada = tarea.EstaCompletada,
             CreadoEnUtc = tarea.CreadoEnUtc,
             ActualizadoEnUtc = tarea.ActualizadoEnUtc,
+            VenceEnUtc = tarea.VenceEnUtc,
         };
     }
 
@@ -25,6 +26,6 @@ public static class TareaMapeador
 
     public static Tarea ADominio(this CrearTareaDto dto)
     {
-        return Tarea.Crear(dto.Titulo, dto.Descripcion);
+        return Tarea.Crear(dto.Titulo, dto.Descripcion, dto.VenceEnUtc);
     }
 }

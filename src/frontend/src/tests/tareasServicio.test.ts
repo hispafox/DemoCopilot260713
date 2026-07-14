@@ -9,7 +9,7 @@ describe('tareasServicio', () => {
   it('obtenerTodas consume /api/tareas y devuelve la lista', async () => {
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(
-        JSON.stringify([{ id: 1, titulo: 'Tarea demo', estaCompletada: false, creadoEnUtc: '2026-07-14T08:00:00Z', actualizadoEnUtc: '2026-07-14T08:00:00Z' }]),
+        JSON.stringify([{ id: 1, titulo: 'Tarea demo', estaCompletada: false, creadoEnUtc: '2026-07-14T08:00:00Z', actualizadoEnUtc: '2026-07-14T08:00:00Z', venceEnUtc: '2026-07-15T08:00:00Z' }]),
         {
           status: 200,
           headers: { 'Content-Type': 'application/json' },

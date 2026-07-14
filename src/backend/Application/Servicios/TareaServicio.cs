@@ -37,7 +37,7 @@ public sealed class TareaServicio : ITareaServicio
         var tarea = await tareaRepositorio.ObtenerPorIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"La tarea con id {id} no existe.");
 
-        tarea.Actualizar(dto.Titulo, dto.Descripcion);
+        tarea.Actualizar(dto.Titulo, dto.Descripcion, dto.VenceEnUtc);
         await tareaRepositorio.GuardarCambiosAsync(cancellationToken);
 
         return tarea.ADto();
