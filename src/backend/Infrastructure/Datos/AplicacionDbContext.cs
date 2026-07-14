@@ -1,0 +1,19 @@
+using AplicacionTareas.Domain;
+using Microsoft.EntityFrameworkCore;
+
+namespace AplicacionTareas.Infrastructure.Datos;
+
+public sealed class AplicacionDbContext : DbContext
+{
+    public AplicacionDbContext(DbContextOptions<AplicacionDbContext> opciones)
+        : base(opciones)
+    {
+    }
+
+    public DbSet<Tarea> Tareas => Set<Tarea>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(AplicacionDbContext).Assembly);
+    }
+}
