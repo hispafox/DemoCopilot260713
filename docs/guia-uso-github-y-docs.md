@@ -35,3 +35,9 @@ Aclarar que informacion usa GitHub Copilot como contexto automatico y que inform
 
 ## Frase lista para compartir
 "Si queremos que Copilot lo aplique siempre, va en `.github`. Si queremos documentarlo para nosotros, va en `docs`."
+
+## Catalogo de agentes del proyecto
+
+- El inventario de agentes personalizados y su uso recomendado esta en `docs/catalogo-agentes-proyecto.md`.
+- Las definiciones tecnicas de cada agente estan en `.github/agents/`.
+- Flujo sugerido para nuevas iniciativas: `planificador-features` -> `desarrollador-desde-issue-o-plan` -> `verificador-requisitos-360`.
