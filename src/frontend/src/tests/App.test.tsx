@@ -9,7 +9,7 @@ vi.mock('../services/tareasServicio', () => {
         {
           id: 1,
           titulo: 'Tarea render',
-          descripcion: 'Desde test',
+          descripcion: '<p>Descripcion con <strong>formato</strong> y <a href="https://ejemplo.com">enlace</a></p>',
           estaCompletada: false,
           creadoEnUtc: '2026-07-14T09:00:00Z',
           actualizadoEnUtc: '2026-07-14T09:00:00Z',
@@ -33,5 +33,8 @@ describe('App', () => {
     await waitFor(() => {
       expect(screen.getByText('Tarea render')).toBeInTheDocument()
     })
+
+    expect(screen.getByText('formato', { selector: 'strong' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'enlace' })).toHaveAttribute('href', 'https://ejemplo.com')
   })
 })

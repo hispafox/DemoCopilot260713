@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
+import { ContenidoDescripcion } from './components/ContenidoDescripcion'
+import { EditorDescripcion } from './components/EditorDescripcion'
 import { tareasServicio } from './services/tareasServicio'
 import type { Tarea } from './types/tarea'
 import './App.css'
@@ -116,12 +118,12 @@ function App() {
           />
 
           <label htmlFor="descripcion">Descripcion (opcional)</label>
-          <textarea
+          <EditorDescripcion
             id="descripcion"
-            value={descripcion}
+            valor={descripcion}
             maxLength={1000}
-            onChange={(evento) => setDescripcion(evento.target.value)}
-            placeholder="Detalles de la tarea"
+            onChange={setDescripcion}
+            placeholder="Detalles de la tarea. Admite negrita, cursiva, listas, enlaces y bloques de codigo."
           />
 
           <label htmlFor="venceEnLocal">Vence el (opcional)</label>
@@ -156,7 +158,7 @@ function App() {
               <li key={tarea.id} className={tarea.estaCompletada ? 'completada' : ''}>
                 <div>
                   <h3>{tarea.titulo}</h3>
-                  {tarea.descripcion ? <p>{tarea.descripcion}</p> : null}
+                  {tarea.descripcion ? <ContenidoDescripcion html={tarea.descripcion} className="contenido-enriquecido" /> : null}
                   <small>
                     Creada: {formatearFecha(tarea.creadoEnUtc)} | Actualizada: {formatearFecha(tarea.actualizadoEnUtc)}
                   </small>
