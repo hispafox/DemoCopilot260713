@@ -3,17 +3,25 @@ import type { FormEvent } from 'react'
 import { ContenidoDescripcion } from './components/ContenidoDescripcion'
 import { EditorDescripcion } from './components/EditorDescripcion'
 import { tareasServicio } from './services/tareasServicio'
+import { usuariosServicio } from './services/usuariosServicio'
 import type { Tarea } from './types/tarea'
+import type { Usuario } from './types/usuario'
 import './App.css'
 
 function App() {
   const [tareas, setTareas] = useState<Tarea[]>([])
+  const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [titulo, setTitulo] = useState('')
+  const [categoria, setCategoria] = useState('')
+  const [usuarioAsignadoId, setUsuarioAsignadoId] = useState('')
   const [descripcion, setDescripcion] = useState('')
   const [venceEnLocal, setVenceEnLocal] = useState('')
+  const [nombreUsuario, setNombreUsuario] = useState('')
   const [cargando, setCargando] = useState(true)
   const [creando, setCreando] = useState(false)
+  const [creandoUsuario, setCreandoUsuario] = useState(false)
   const [error, setError] = useState('')
+  const [mensajeUsuario, setMensajeUsuario] = useState('')
 
   const tareasOrdenadas = useMemo(
     () => [...tareas].sort((a, b) => a.estaCompletada === b.estaCompletada ? 0 : a.estaCompletada ? 1 : -1),
@@ -21,7 +29,7 @@ function App() {
   )
 
   useEffect(() => {
-    void cargarTareas()
+    void Promise.all([cargarTareas(), cargarUsuarios()])
   }, [])
 
   async function cargarTareas() {
@@ -37,6 +45,15 @@ function App() {
     }
   }
 
+  async function cargarUsuarios() {
+    try {
+      const resultado = await usuariosServicio.obtenerTodos()
+      setUsuarios(resultado)
+    } catch (errorCargarUsuarios) {
+      setError(errorCargarUsuarios instanceof Error ? errorCargarUsuarios.message : 'No se pudo cargar la lista de usuarios.')
+    }
+  }
+
   async function crearTarea(evento: FormEvent<HTMLFormElement>) {
     evento.preventDefault()
 
@@ -45,23 +62,65 @@ function App() {
       return
     }
 
+    if (!categoria.trim()) {
+      setError('La categoria es obligatoria.')
+      return
+    }
+
+    if (!usuarioAsignadoId.trim()) {
+      setError('El usuario asignado es obligatorio.')
+      return
+    }
+
     try {
       setError('')
       setCreando(true)
       const tareaCreada = await tareasServicio.crear({
         titulo,
+        categoria,
+        usuarioAsignadoId: Number(usuarioAsignadoId),
         descripcion: descripcion.trim() || undefined,
         venceEnUtc: convertirFechaLocalAIsoUtc(venceEnLocal),
       })
 
       setTareas((previo) => [tareaCreada, ...previo])
       setTitulo('')
+      setCategoria('')
+      setUsuarioAsignadoId('')
       setDescripcion('')
       setVenceEnLocal('')
     } catch (errorCrear) {
       setError(errorCrear instanceof Error ? errorCrear.message : 'No se pudo crear la tarea.')
     } finally {
       setCreando(false)
+    }
+  }
+
+  async function crearUsuario(evento: FormEvent<HTMLFormElement>) {
+    evento.preventDefault()
+
+    if (!nombreUsuario.trim()) {
+      setError('El nombre del usuario es obligatorio.')
+      setMensajeUsuario('')
+      return
+    }
+
+    try {
+      setError('')
+      setMensajeUsuario('')
+      setCreandoUsuario(true)
+
+      const usuarioCreado = await usuariosServicio.crear({
+        nombre: nombreUsuario,
+      })
+
+      setNombreUsuario('')
+      setMensajeUsuario(`Usuario creado: ${usuarioCreado.nombre}`)
+    } catch (errorCrearUsuario) {
+      setError(errorCrearUsuario instanceof Error ? errorCrearUsuario.message : 'No se pudo crear el usuario.')
+      setMensajeUsuario('')
+    } finally {
+      setCreandoUsuario(false)
     }
   }
 
@@ -97,6 +156,10 @@ function App() {
     return new Date(fechaLocal).toISOString()
   }
 
+  function obtenerNombreUsuario(usuarioId: number) {
+    return usuarios.find((usuario) => usuario.id === usuarioId)?.nombre ?? `Usuario ${usuarioId}`
+  }
+
   return (
     <main className="contenedor">
       <header className="cabecera">
@@ -116,6 +179,31 @@ function App() {
             placeholder="Ejemplo: preparar demo"
             required
           />
+
+          <label htmlFor="categoria">Categoria</label>
+          <input
+            id="categoria"
+            value={categoria}
+            maxLength={100}
+            onChange={(evento) => setCategoria(evento.target.value)}
+            placeholder="Ejemplo: trabajo"
+            required
+          />
+
+          <label htmlFor="usuarioAsignadoId">Usuario asignado</label>
+          <select
+            id="usuarioAsignadoId"
+            value={usuarioAsignadoId}
+            onChange={(evento) => setUsuarioAsignadoId(evento.target.value)}
+            required
+          >
+            <option value="">Selecciona un usuario</option>
+            {usuarios.map((usuario) => (
+              <option key={usuario.id} value={usuario.id}>
+                {usuario.nombre}
+              </option>
+            ))}
+          </select>
 
           <label htmlFor="descripcion">Descripcion (opcional)</label>
           <EditorDescripcion
@@ -140,6 +228,26 @@ function App() {
         </form>
       </section>
 
+      <section className="panel panel-formulario">
+        <h2>Alta de usuario</h2>
+        <form onSubmit={crearUsuario}>
+          <label htmlFor="nombreUsuario">Nombre</label>
+          <input
+            id="nombreUsuario"
+            value={nombreUsuario}
+            maxLength={200}
+            onChange={(evento) => setNombreUsuario(evento.target.value)}
+            placeholder="Ejemplo: Ana Martinez"
+            required
+          />
+
+          <button type="submit" disabled={creandoUsuario}>
+            {creandoUsuario ? 'Creando usuario...' : 'Crear usuario'}
+          </button>
+        </form>
+        {mensajeUsuario ? <p>{mensajeUsuario}</p> : null}
+      </section>
+
       <section className="panel panel-lista">
         <div className="encabezado-lista">
           <h2>Tareas</h2>
@@ -158,6 +266,8 @@ function App() {
               <li key={tarea.id} className={tarea.estaCompletada ? 'completada' : ''}>
                 <div>
                   <h3>{tarea.titulo}</h3>
+                  <small>Categoria: {tarea.categoria}</small>
+                  <small>Usuario: {obtenerNombreUsuario(tarea.usuarioAsignadoId)}</small>
                   {tarea.descripcion ? <ContenidoDescripcion html={tarea.descripcion} className="contenido-enriquecido" /> : null}
                   <small>
                     Creada: {formatearFecha(tarea.creadoEnUtc)} | Actualizada: {formatearFecha(tarea.actualizadoEnUtc)}

@@ -8,6 +8,10 @@ public sealed class TareaDto
 
     public string? Descripcion { get; init; }
 
+    public string Categoria { get; init; } = string.Empty;
+
+    public int UsuarioAsignadoId { get; init; }
+
     public bool EstaCompletada { get; init; } = false;
 
     public DateTime CreadoEnUtc { get; init; }

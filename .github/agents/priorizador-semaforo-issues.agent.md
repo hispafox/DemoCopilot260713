@@ -1,6 +1,7 @@
 ---
 name: priorizador-semaforo-issues
 description: "Lee y actualiza issues o tickets de GitHub para clasificar trabajo con semaforo (rojo, amarillo, verde), separar trabajo reactivo y planificado, aplicar etiquetas, limitar urgencias por persona y proponer rebalanceos diarios. Usar cuando se necesite priorizar backlog, revisar urgencias o ordenar trabajo del equipo."
+tools: [run_in_terminal]
 ---
 
 # Priorizador Semaforo de Issues

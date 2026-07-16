@@ -22,6 +22,8 @@ builder.Services.AddDbContext<AplicacionDbContext>(opciones =>
     opciones.UseSqlite(builder.Configuration.GetConnectionString("BaseDatos") ?? "Data Source=tareas.db"));
 builder.Services.AddScoped<ITareaRepositorio, TareaRepositorio>();
 builder.Services.AddScoped<ITareaServicio, TareaServicio>();
+builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
 
 var app = builder.Build();
 

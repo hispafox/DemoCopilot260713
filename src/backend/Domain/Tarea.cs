@@ -8,6 +8,10 @@ public sealed class Tarea
 
     public string? Descripcion { get; private set; }
 
+    public string Categoria { get; private set; } = string.Empty;
+
+    public int UsuarioAsignadoId { get; private set; }
+
     public bool EstaCompletada { get; private set; } = false;
 
     public DateTime CreadoEnUtc { get; private set; }
@@ -25,11 +29,15 @@ public sealed class Tarea
     /// </summary>
     /// <param name="titulo">Titulo obligatorio de la tarea.</param>
     /// <param name="descripcion">Descripcion opcional de la tarea.</param>
+    /// <param name="categoria">Categoria obligatoria de la tarea.</param>
+    /// <param name="usuarioAsignadoId">Identificador obligatorio del usuario responsable.</param>
     /// <returns>Instancia valida de <see cref="Tarea"/>.</returns>
-    /// <exception cref="ArgumentException">Se produce cuando el titulo esta vacio o excede la longitud maxima.</exception>
-    public static Tarea Crear(string titulo, string? descripcion, DateTime? venceEnUtc)
+    /// <exception cref="ArgumentException">Se produce cuando el titulo, la categoria o el usuario asignado son invalidos.</exception>
+    public static Tarea Crear(string titulo, string? descripcion, string categoria, int usuarioAsignadoId, DateTime? venceEnUtc)
     {
         ValidarTitulo(titulo);
+        ValidarCategoria(categoria);
+        ValidarUsuarioAsignadoId(usuarioAsignadoId);
 
         var ahoraUtc = DateTime.UtcNow;
 
@@ -37,6 +45,8 @@ public sealed class Tarea
         {
             Titulo = titulo.Trim(),
             Descripcion = NormalizarDescripcion(descripcion),
+            Categoria = categoria.Trim(),
+            UsuarioAsignadoId = usuarioAsignadoId,
             EstaCompletada = false,
             CreadoEnUtc = ahoraUtc,
             ActualizadoEnUtc = ahoraUtc,
@@ -49,13 +59,16 @@ public sealed class Tarea
     /// </summary>
     /// <param name="titulo">Nuevo titulo obligatorio.</param>
     /// <param name="descripcion">Nueva descripcion opcional.</param>
-    /// <exception cref="ArgumentException">Se produce cuando el titulo es invalido.</exception>
-    public void Actualizar(string titulo, string? descripcion, DateTime? venceEnUtc)
+    /// <param name="categoria">Nueva categoria obligatoria.</param>
+    /// <exception cref="ArgumentException">Se produce cuando el titulo o la categoria son invalidos.</exception>
+    public void Actualizar(string titulo, string? descripcion, string categoria, DateTime? venceEnUtc)
     {
         ValidarTitulo(titulo);
+        ValidarCategoria(categoria);
 
         Titulo = titulo.Trim();
         Descripcion = NormalizarDescripcion(descripcion);
+        Categoria = categoria.Trim();
         VenceEnUtc = NormalizarFechaUtc(venceEnUtc);
         ActualizadoEnUtc = DateTime.UtcNow;
     }
@@ -118,6 +131,27 @@ public sealed class Tarea
         }
 
         return descripcionNormalizada;
+    }
+
+    private static void ValidarCategoria(string categoria)
+    {
+        if (string.IsNullOrWhiteSpace(categoria))
+        {
+            throw new ArgumentException("La categoria de la tarea es obligatoria.", nameof(categoria));
+        }
+
+        if (categoria.Trim().Length > 100)
+        {
+            throw new ArgumentException("La categoria de la tarea no puede superar 100 caracteres.", nameof(categoria));
+        }
+    }
+
+    private static void ValidarUsuarioAsignadoId(int usuarioAsignadoId)
+    {
+        if (usuarioAsignadoId <= 0)
+        {
+            throw new ArgumentException("El usuario asignado es obligatorio.", nameof(usuarioAsignadoId));
+        }
     }
 
     private static DateTime? NormalizarFechaUtc(DateTime? fechaUtc)

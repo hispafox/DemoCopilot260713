@@ -40,4 +40,4 @@ Aclarar que informacion usa GitHub Copilot como contexto automatico y que inform
 
 - El inventario de agentes personalizados y su uso recomendado esta en `docs/catalogo-agentes-proyecto.md`.
 - Las definiciones tecnicas de cada agente estan en `.github/agents/`.
-- Flujo sugerido para nuevas iniciativas: `planificador-features` -> `desarrollador-desde-issue-o-plan` -> `verificador-requisitos-360`.
+- Flujo sugerido para nuevas iniciativas: `planificador-democopilot` -> `desarrollador-democopilot` -> `verificador-requisitos-360`.

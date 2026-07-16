@@ -7,10 +7,12 @@ namespace AplicacionTareas.Application.Servicios;
 public sealed class TareaServicio : ITareaServicio
 {
     private readonly ITareaRepositorio tareaRepositorio;
+    private readonly IUsuarioRepositorio usuarioRepositorio;
 
-    public TareaServicio(ITareaRepositorio tareaRepositorio)
+    public TareaServicio(ITareaRepositorio tareaRepositorio, IUsuarioRepositorio usuarioRepositorio)
     {
         this.tareaRepositorio = tareaRepositorio;
+        this.usuarioRepositorio = usuarioRepositorio;
     }
 
     public async Task<IReadOnlyList<TareaDto>> ObtenerTodasAsync(CancellationToken cancellationToken = default)
@@ -27,6 +29,12 @@ public sealed class TareaServicio : ITareaServicio
 
     public async Task<TareaDto> CrearAsync(CrearTareaDto dto, CancellationToken cancellationToken = default)
     {
+        var usuarioAsignado = await usuarioRepositorio.ObtenerPorIdAsync(dto.UsuarioAsignadoId, cancellationToken);
+        if (usuarioAsignado is null)
+        {
+            throw new ArgumentException("El usuario asignado no existe.", nameof(dto.UsuarioAsignadoId));
+        }
+
         var tarea = dto.ADominio();
         var tareaCreada = await tareaRepositorio.AgregarAsync(tarea, cancellationToken);
         return tareaCreada.ADto();
@@ -37,7 +45,7 @@ public sealed class TareaServicio : ITareaServicio
         var tarea = await tareaRepositorio.ObtenerPorIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"La tarea con id {id} no existe.");
 
-        tarea.Actualizar(dto.Titulo, dto.Descripcion, dto.VenceEnUtc);
+        tarea.Actualizar(dto.Titulo, dto.Descripcion, dto.Categoria, dto.VenceEnUtc);
         await tareaRepositorio.GuardarCambiosAsync(cancellationToken);
 
         return tarea.ADto();

@@ -1,6 +1,7 @@
 ---
 name: verificador-requisitos-360
 description: "Revisa cumplimiento de requisitos con vision 360: documento, codigo e issues de GitHub. Puede auditar todo el documento o un subconjunto (HU/RF/RNF/RB/endpoints) y entrega trazabilidad, brechas y plan de accion."
+tools: [run_in_terminal]
 ---
 
 # Verificador de Requisitos 360

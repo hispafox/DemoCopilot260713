@@ -12,6 +12,8 @@ public static class TareaMapeador
             Id = tarea.Id,
             Titulo = tarea.Titulo,
             Descripcion = tarea.Descripcion,
+            Categoria = tarea.Categoria,
+            UsuarioAsignadoId = tarea.UsuarioAsignadoId,
             EstaCompletada = tarea.EstaCompletada,
             CreadoEnUtc = tarea.CreadoEnUtc,
             ActualizadoEnUtc = tarea.ActualizadoEnUtc,
@@ -26,6 +28,6 @@ public static class TareaMapeador
 
     public static Tarea ADominio(this CrearTareaDto dto)
     {
-        return Tarea.Crear(dto.Titulo, dto.Descripcion, dto.VenceEnUtc);
+        return Tarea.Crear(dto.Titulo, dto.Descripcion, dto.Categoria, dto.UsuarioAsignadoId, dto.VenceEnUtc);
     }
 }

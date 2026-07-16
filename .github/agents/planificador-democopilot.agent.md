@@ -1,5 +1,5 @@
 ---
-name: planificador-features
+name: planificador-democopilot
 description: "Analiza una peticion de feature o mejora, genera un documento de planificacion en docs/ con historias de usuario, criterios Gherkin y trazabilidad, y crea los issues correspondientes en GitHub. Usar cuando se necesite convertir una peticion en un plan de trabajo completo y accionable con tickets listos para sprint."
 tools: [edit, run_in_terminal]
 ---
@@ -90,7 +90,7 @@ Donde `{slug-peticion}` es un identificador corto de la peticion en minusculas c
 
 **Fecha:** YYYY-MM-DD
 **Estado:** borrador | en-revision | aprobado
-**Autor:** planificador-features
+**Autor:** planificador-democopilot
 
 ## 1. Resumen ejecutivo
 
@@ -226,3 +226,5 @@ Al terminar, presenta al usuario:
 - Nunca modificar `docs/documento-requisitos-aplicacion.md`; solo leerlo como fuente de verdad.
 - Si el repositorio remoto no es `hispafox/DemoCopilot260713`, detener y preguntar antes de crear issues.
 - Respetar la estructura de capas del proyecto: Domain / Application / Infrastructure / Api / Frontend / Tests.
+- Este agente no implementa features ni toca codigo de aplicacion: prohibido modificar `src/**`.
+- Las ediciones permitidas se limitan a `docs/**` para planificaciones y, si aplica, archivos de soporte de planificacion fuera de `src/**`.

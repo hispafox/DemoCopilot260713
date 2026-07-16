@@ -34,9 +34,12 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
     public async Task Crear_ConPayloadValido_DevuelveCreated()
     {
         var vencimientoUtc = DateTime.UtcNow.AddDays(3);
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
         var dto = new CrearTareaDto
         {
             Titulo = "Test integracion",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = usuarioId,
             Descripcion = "Validar endpoint post",
             VenceEnUtc = vencimientoUtc,
         };
@@ -48,15 +51,20 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
         var creada = await respuesta.Content.ReadFromJsonAsync<TareaDto>();
         Assert.NotNull(creada);
         Assert.True(creada!.Id > 0);
+        Assert.Equal(dto.Categoria, creada.Categoria);
+        Assert.Equal(usuarioId, creada.UsuarioAsignadoId);
         Assert.Equal(vencimientoUtc, creada.VenceEnUtc);
     }
 
     [Fact]
     public async Task ObtenerPorId_CuandoExiste_DevuelveOkConTarea()
     {
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
         var crearDto = new CrearTareaDto
         {
             Titulo = "Consultar tarea",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = usuarioId,
             Descripcion = "Caso de get por id",
         };
 
@@ -70,14 +78,19 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
         var tarea = await respuesta.Content.ReadFromJsonAsync<TareaDto>();
         Assert.NotNull(tarea);
         Assert.Equal(creada.Id, tarea!.Id);
+        Assert.Equal(creada.Categoria, tarea.Categoria);
+        Assert.Equal(usuarioId, tarea.UsuarioAsignadoId);
     }
 
     [Fact]
     public async Task Completar_CuandoExiste_DevuelveNoContent()
     {
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
         var crearDto = new CrearTareaDto
         {
             Titulo = "Completar tarea",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = usuarioId,
             Descripcion = "Caso de patch",
         };
 
@@ -92,9 +105,12 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
     [Fact]
     public async Task Eliminar_CuandoExiste_DevuelveNoContent()
     {
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
         var crearDto = new CrearTareaDto
         {
             Titulo = "Eliminar tarea",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = usuarioId,
             Descripcion = "Caso de delete",
         };
 
@@ -109,15 +125,102 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
     [Fact]
     public async Task Crear_ConVencimientoPasado_DevuelveBadRequest()
     {
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
         var dto = new CrearTareaDto
         {
             Titulo = "Tarea invalida",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = usuarioId,
             VenceEnUtc = DateTime.UtcNow.AddMinutes(-15),
         };
 
         var respuesta = await cliente.PostAsJsonAsync("/api/tareas", dto);
 
         Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+    }
+
+    [Fact]
+    public async Task Crear_SinCategoria_DevuelveBadRequest()
+    {
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
+        var dto = new CrearTareaDto
+        {
+            Titulo = "Tarea sin categoria",
+            UsuarioAsignadoId = usuarioId,
+        };
+
+        var respuesta = await cliente.PostAsJsonAsync("/api/tareas", dto);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+    }
+
+    [Fact]
+    public async Task Actualizar_ConNuevaCategoria_DevuelveOkConCategoriaActualizada()
+    {
+        var usuarioId = await CrearUsuarioAsync("Ana Martinez");
+        var creacionDto = new CrearTareaDto
+        {
+            Titulo = "Ajustar roadmap",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = usuarioId,
+            Descripcion = "Version inicial",
+        };
+
+        var creacion = await cliente.PostAsJsonAsync("/api/tareas", creacionDto);
+        var creada = await creacion.Content.ReadFromJsonAsync<TareaDto>();
+
+        var actualizacionDto = new ActualizarTareaDto
+        {
+            Titulo = "Ajustar roadmap",
+            Categoria = "Planificacion",
+            Descripcion = "Version refinada",
+            VenceEnUtc = DateTime.UtcNow.AddDays(4),
+        };
+
+        var respuesta = await cliente.PutAsJsonAsync($"/api/tareas/{creada!.Id}", actualizacionDto);
+
+        Assert.Equal(HttpStatusCode.OK, respuesta.StatusCode);
+
+        var actualizada = await respuesta.Content.ReadFromJsonAsync<TareaDto>();
+        Assert.NotNull(actualizada);
+        Assert.Equal("Planificacion", actualizada!.Categoria);
+        Assert.Equal(usuarioId, actualizada.UsuarioAsignadoId);
+    }
+
+    [Fact]
+    public async Task Crear_SinUsuarioAsignado_DevuelveBadRequest()
+    {
+        var dto = new CrearTareaDto
+        {
+            Titulo = "Tarea sin responsable",
+            Categoria = "Trabajo",
+        };
+
+        var respuesta = await cliente.PostAsJsonAsync("/api/tareas", dto);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+    }
+
+    [Fact]
+    public async Task Crear_ConUsuarioAsignadoInexistente_DevuelveBadRequest()
+    {
+        var dto = new CrearTareaDto
+        {
+            Titulo = "Tarea con responsable inexistente",
+            Categoria = "Trabajo",
+            UsuarioAsignadoId = 999,
+        };
+
+        var respuesta = await cliente.PostAsJsonAsync("/api/tareas", dto);
+
+        Assert.Equal(HttpStatusCode.BadRequest, respuesta.StatusCode);
+    }
+
+    private async Task<int> CrearUsuarioAsync(string nombre)
+    {
+        var respuesta = await cliente.PostAsJsonAsync("/api/usuarios", new CrearUsuarioDto { Nombre = nombre });
+        var usuario = await respuesta.Content.ReadFromJsonAsync<UsuarioDto>();
+        return usuario!.Id;
     }
 }
 

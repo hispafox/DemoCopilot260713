@@ -33,6 +33,13 @@ public sealed class TareaConfiguracion : IEntityTypeConfiguration<Tarea>
         builder.Property(tarea => tarea.Descripcion)
             .HasMaxLength(1000);
 
+        builder.Property(tarea => tarea.Categoria)
+            .IsRequired()
+            .HasMaxLength(100);
+
+        builder.Property(tarea => tarea.UsuarioAsignadoId)
+            .IsRequired();
+
         builder.Property(tarea => tarea.EstaCompletada)
             .IsRequired()
             .HasDefaultValue(false);
@@ -53,6 +60,12 @@ public sealed class TareaConfiguracion : IEntityTypeConfiguration<Tarea>
 
         builder.HasIndex(tarea => tarea.Titulo)
             .HasDatabaseName("IX_Tareas_Titulo");
+
+        builder.HasIndex(tarea => tarea.Categoria)
+            .HasDatabaseName("IX_Tareas_Categoria");
+
+        builder.HasIndex(tarea => tarea.UsuarioAsignadoId)
+            .HasDatabaseName("IX_Tareas_UsuarioAsignadoId");
 
         builder.HasIndex(tarea => tarea.VenceEnUtc)
             .HasDatabaseName("IX_Tareas_VenceEnUtc");

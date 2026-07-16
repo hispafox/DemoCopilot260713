@@ -2,7 +2,7 @@
 
 **Fecha:** 2026-07-15
 **Estado:** borrador
-**Autor:** planificador-features
+**Autor:** planificador-democopilot
 
 ## 1. Resumen ejecutivo
 
