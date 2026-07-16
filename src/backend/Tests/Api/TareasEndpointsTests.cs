@@ -218,7 +218,9 @@ public sealed class TareasEndpointsTests : IClassFixture<TareasApiFactory>
 
     private async Task<int> CrearUsuarioAsync(string nombre)
     {
-        var respuesta = await cliente.PostAsJsonAsync("/api/usuarios", new CrearUsuarioDto { Nombre = nombre });
+        var departamentoRespuesta = await cliente.PostAsJsonAsync("/api/departamentos", new CrearDepartamentoDto { Nombre = $"Departamento {Guid.NewGuid():N}" });
+        var departamento = await departamentoRespuesta.Content.ReadFromJsonAsync<DepartamentoDto>();
+        var respuesta = await cliente.PostAsJsonAsync("/api/usuarios", new CrearUsuarioDto { Nombre = nombre, DepartamentoId = departamento!.Id });
         var usuario = await respuesta.Content.ReadFromJsonAsync<UsuarioDto>();
         return usuario!.Id;
     }

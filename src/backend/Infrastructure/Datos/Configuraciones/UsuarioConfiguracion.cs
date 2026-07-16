@@ -24,6 +24,9 @@ public sealed class UsuarioConfiguracion : IEntityTypeConfiguration<Usuario>
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(usuario => usuario.DepartamentoId)
+            .IsRequired();
+
         builder.Property(usuario => usuario.CreadoEnUtc)
             .IsRequired()
             .HasConversion(convertidorUtc);
@@ -34,5 +37,13 @@ public sealed class UsuarioConfiguracion : IEntityTypeConfiguration<Usuario>
 
         builder.HasIndex(usuario => usuario.Nombre)
             .HasDatabaseName("IX_Usuarios_Nombre");
+
+        builder.HasIndex(usuario => usuario.DepartamentoId)
+            .HasDatabaseName("IX_Usuarios_DepartamentoId");
+
+        builder.HasOne(usuario => usuario.Departamento)
+            .WithMany(departamento => departamento.Usuarios)
+            .HasForeignKey(usuario => usuario.DepartamentoId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

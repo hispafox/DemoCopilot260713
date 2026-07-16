@@ -1,14 +1,10 @@
 namespace AplicacionTareas.Application.DTOs;
 
-public sealed class UsuarioDto
+public sealed class DepartamentoDto
 {
     public int Id { get; init; }
 
     public string Nombre { get; init; } = string.Empty;
-
-    public int DepartamentoId { get; init; }
-
-    public string DepartamentoNombre { get; init; } = string.Empty;
 
     public DateTime CreadoEnUtc { get; init; }
 

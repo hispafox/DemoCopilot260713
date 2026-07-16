@@ -22,10 +22,29 @@ public sealed class UsuariosControlador : ControllerBase
         return Ok(usuarios);
     }
 
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UsuarioDto>> ObtenerPorId(int id, CancellationToken cancellationToken)
+    {
+        var usuario = await usuarioServicio.ObtenerPorIdAsync(id, cancellationToken);
+        if (usuario is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(usuario);
+    }
+
     [HttpPost]
     public async Task<ActionResult<UsuarioDto>> Crear([FromBody] CrearUsuarioDto dto, CancellationToken cancellationToken)
     {
         var usuarioCreado = await usuarioServicio.CrearAsync(dto, cancellationToken);
-        return Created($"/api/usuarios/{usuarioCreado.Id}", usuarioCreado);
+        return CreatedAtAction(nameof(ObtenerPorId), new { id = usuarioCreado.Id }, usuarioCreado);
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<UsuarioDto>> Actualizar(int id, [FromBody] ActualizarUsuarioDto dto, CancellationToken cancellationToken)
+    {
+        var usuarioActualizado = await usuarioServicio.ActualizarAsync(id, dto, cancellationToken);
+        return Ok(usuarioActualizado);
     }
 }

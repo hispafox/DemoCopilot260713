@@ -14,6 +14,8 @@ public sealed class AplicacionDbContext : DbContext
 
     public DbSet<Usuario> Usuarios => Set<Usuario>();
 
+    public DbSet<Departamento> Departamentos => Set<Departamento>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AplicacionDbContext).Assembly);

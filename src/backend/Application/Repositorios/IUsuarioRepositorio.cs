@@ -8,5 +8,9 @@ public interface IUsuarioRepositorio
 
     Task<Usuario?> ObtenerPorIdAsync(int id, CancellationToken cancellationToken = default);
 
+    Task<Usuario?> ObtenerPorIdParaActualizacionAsync(int id, CancellationToken cancellationToken = default);
+
     Task<Usuario> AgregarAsync(Usuario usuario, CancellationToken cancellationToken = default);
+
+    Task GuardarCambiosAsync(CancellationToken cancellationToken = default);
 }

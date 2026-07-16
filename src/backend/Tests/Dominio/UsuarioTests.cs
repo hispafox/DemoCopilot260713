@@ -7,9 +7,10 @@ public sealed class UsuarioTests
     [Fact]
     public void Crear_ConNombreValido_DevuelveUsuarioConAuditoriaUtc()
     {
-        var usuario = Usuario.Crear("Ana Martinez");
+        var usuario = Usuario.Crear("Ana Martinez", 1);
 
         Assert.Equal("Ana Martinez", usuario.Nombre);
+        Assert.Equal(1, usuario.DepartamentoId);
         Assert.Equal(DateTimeKind.Utc, usuario.CreadoEnUtc.Kind);
         Assert.Equal(DateTimeKind.Utc, usuario.ActualizadoEnUtc.Kind);
     }
@@ -19,7 +20,7 @@ public sealed class UsuarioTests
     [InlineData("   ")]
     public void Crear_ConNombreInvalido_LanzaArgumentException(string nombre)
     {
-        Assert.Throws<ArgumentException>(() => Usuario.Crear(nombre));
+        Assert.Throws<ArgumentException>(() => Usuario.Crear(nombre, 1));
     }
 
     [Fact]
@@ -27,6 +28,12 @@ public sealed class UsuarioTests
     {
         var nombre = new string('a', 201);
 
-        Assert.Throws<ArgumentException>(() => Usuario.Crear(nombre));
+        Assert.Throws<ArgumentException>(() => Usuario.Crear(nombre, 1));
+    }
+
+    [Fact]
+    public void Crear_ConDepartamentoInvalido_LanzaArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => Usuario.Crear("Ana Martinez", 0));
     }
 }

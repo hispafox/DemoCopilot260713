@@ -11,6 +11,8 @@ public static class UsuarioMapeador
         {
             Id = usuario.Id,
             Nombre = usuario.Nombre,
+            DepartamentoId = usuario.DepartamentoId,
+            DepartamentoNombre = usuario.Departamento?.Nombre ?? string.Empty,
             CreadoEnUtc = usuario.CreadoEnUtc,
             ActualizadoEnUtc = usuario.ActualizadoEnUtc,
         };
@@ -18,6 +20,6 @@ public static class UsuarioMapeador
 
     public static Usuario ADominio(this CrearUsuarioDto dto)
     {
-        return Usuario.Crear(dto.Nombre);
+        return Usuario.Crear(dto.Nombre, dto.DepartamentoId);
     }
 }

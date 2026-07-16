@@ -43,7 +43,7 @@ public sealed class TareaServicioTests
         };
 
         usuarioRepositorio.ObtenerPorIdAsync(dto.UsuarioAsignadoId, Arg.Any<CancellationToken>())
-            .Returns(Usuario.Crear("Ana Martinez"));
+            .Returns(Usuario.Crear("Ana Martinez", 1));
 
         tareaRepositorio.AgregarAsync(Arg.Any<Tarea>(), Arg.Any<CancellationToken>())
             .Returns(x => Task.FromResult<Tarea>(x.Arg<Tarea>()!));
@@ -80,7 +80,7 @@ public sealed class TareaServicioTests
         };
 
         usuarioRepositorio.ObtenerPorIdAsync(dto.UsuarioAsignadoId, Arg.Any<CancellationToken>())
-            .Returns(Usuario.Crear("Ana Martinez"));
+            .Returns(Usuario.Crear("Ana Martinez", 1));
 
         await Assert.ThrowsAsync<ArgumentException>(
             async () => await tareaServicio.CrearAsync(dto, CancellationToken.None));

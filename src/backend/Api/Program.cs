@@ -24,6 +24,8 @@ builder.Services.AddScoped<ITareaRepositorio, TareaRepositorio>();
 builder.Services.AddScoped<ITareaServicio, TareaServicio>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 builder.Services.AddScoped<IUsuarioServicio, UsuarioServicio>();
+builder.Services.AddScoped<IDepartamentoRepositorio, DepartamentoRepositorio>();
+builder.Services.AddScoped<IDepartamentoServicio, DepartamentoServicio>();
 
 var app = builder.Build();
 

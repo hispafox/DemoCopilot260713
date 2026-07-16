@@ -16,6 +16,38 @@
   color: #475569;
 }
 
+.menu-secciones {
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.35rem;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #f8fbff;
+}
+
+.menu-seccion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.45rem 0.8rem;
+  text-decoration: none;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.menu-seccion:hover {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+}
+
+.menu-seccion--activa {
+  border-color: #60a5fa;
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
 .panel {
   background: #fff;
   border: 1px solid #e2e8f0;
@@ -401,6 +433,20 @@ button:disabled {
 
 .lista-tareas h3 {
   margin: 0;
+}
+
+.lista-usuarios {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.lista-usuarios li {
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  padding: 0.65rem 0.75rem;
 }
 
 .lista-tareas p {

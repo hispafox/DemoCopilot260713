@@ -13,6 +13,10 @@ Documentar los agentes personalizados disponibles en este repositorio para que e
 - Proposito: mejorar la redaccion de prompts de trabajo.
 - Usar cuando: se quiera optimizar un prompt con objetivo, contexto, restricciones y formato.
 
+### consolidador-evolutivos-limpio
+- Proposito: consolidar requisitos iniciales y evolutivos en una baseline limpia y vigente, con anexo de trazabilidad verificable.
+- Usar cuando: se quiera presentar un estado funcional actual "como si fuera inicial" sin ruido historico, manteniendo auditoria del origen.
+
 ### desarrollador-democopilot
 - Proposito: implementar una feature de punta a punta desde un issue o desde un plan generado por planificador-democopilot.
 - Usar cuando: ya existe una unidad de trabajo definida y se quiere ejecutar con trazabilidad, pruebas y verificacion integral.
@@ -44,6 +48,7 @@ Documentar los agentes personalizados disponibles en este repositorio para que e
 2. desarrollador-democopilot: implementa con pruebas y trazabilidad.
 3. verificador-democopilot: valida la implementación contra el plan entregado.
 4. verificador-requisitos-360: audita cumplimiento real tras la implementacion.
+5. consolidador-evolutivos-limpio: genera baseline consolidada limpia para siguiente ciclo o hito de cliente.
 
 ## Ubicacion tecnica
 - Definiciones de agentes: .github/agents/

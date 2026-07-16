@@ -12,6 +12,8 @@ describe('usuariosServicio', () => {
         JSON.stringify({
           id: 1,
           nombre: 'Ana Martinez',
+          departamentoId: 3,
+          departamentoNombre: 'Operaciones',
           creadoEnUtc: '2026-07-15T08:00:00Z',
           actualizadoEnUtc: '2026-07-15T08:00:00Z',
         }),
@@ -22,10 +24,11 @@ describe('usuariosServicio', () => {
       ),
     )
 
-    const resultado = await usuariosServicio.crear({ nombre: 'Ana Martinez' })
+    const resultado = await usuariosServicio.crear({ nombre: 'Ana Martinez', departamentoId: 3 })
 
     expect(fetchMock).toHaveBeenCalledWith('/api/usuarios', expect.any(Object))
     expect(resultado.nombre).toBe('Ana Martinez')
+    expect(resultado.departamentoNombre).toBe('Operaciones')
   })
 
   it('obtenerTodos consume /api/usuarios y devuelve la lista', async () => {
@@ -35,6 +38,8 @@ describe('usuariosServicio', () => {
           {
             id: 1,
             nombre: 'Ana Martinez',
+            departamentoId: 3,
+            departamentoNombre: 'Operaciones',
             creadoEnUtc: '2026-07-15T08:00:00Z',
             actualizadoEnUtc: '2026-07-15T08:00:00Z',
           },
@@ -50,5 +55,6 @@ describe('usuariosServicio', () => {
 
     expect(fetchMock).toHaveBeenCalledWith('/api/usuarios', expect.any(Object))
     expect(resultado[0]?.nombre).toBe('Ana Martinez')
+    expect(resultado[0]?.departamentoNombre).toBe('Operaciones')
   })
 })
